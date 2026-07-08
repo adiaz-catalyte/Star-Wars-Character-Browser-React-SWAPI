@@ -1,1 +1,1 @@
-# Star-Wars-Character-Browser-React-SWAPI-
+# Star-Wars-Character-Browser-React-SWAPI
