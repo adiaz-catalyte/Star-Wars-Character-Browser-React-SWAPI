@@ -1,12 +1,3 @@
-export const test_object = {
-    name: "Luke Skywalker",
-    height: "172",
-    mass: "77",
-    birth_year: "19BBY",
-    gender: "male",
-    url: "https://swapi.tech/api/people/1"
-};
-
 export async function fetchCharacters() {
     try {
         const response = await fetch('https://swapi.tech/api/people');

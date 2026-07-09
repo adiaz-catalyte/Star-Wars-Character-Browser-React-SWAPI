@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { fetchCharacters, test_object } from "../services/fetch_characters";
+import { fetchCharacters } from "../services/fetch_characters";
 import './Table.css';
 
 function CharacterTable({ searchQuery }) {
