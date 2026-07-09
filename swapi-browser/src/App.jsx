@@ -8,6 +8,7 @@ import { test_object } from "./fetch_characters";
 function CharecterTable() {
 
     const characters = [test_object];
+    const [selectedCharacter, setSelectedCharacter] = useState(null);
 
     return (
         <div style={{ padding: '20px' }}>
@@ -26,8 +27,12 @@ function CharecterTable() {
 
                 {/* Table Body with Dynamic Rows */}
                 <tbody>
-                    {characters.map((character) => (
-                        <tr>
+                    {characters.map((character, index) => (
+                        <tr
+                            key={index}
+                            onClick = {() => setSelectedCharacter(character)}
+                            style={{ cursor: "pointer"}}
+                        >
                             <td>{character.name}</td>
                             <td>{character.height}</td>
                             <td>{character.mass}</td>
@@ -36,6 +41,20 @@ function CharecterTable() {
                         </tr>
                     ))}
                 </tbody>
+
+                {selectedCharacter && (
+                    <div style={{ marginTop: "20px"}}>
+                        <h3>Character Details</h3>
+                        <p><strong>Name:</strong>{selectedCharacter.name}</p>
+                        <p><strong>Height:</strong>{selectedCharacter.height}</p>
+                        <p><strong>Weight:</strong>{selectedCharacter.mass}</p>
+                        <p><strong>Birth Year:</strong>{selectedCharacter.birth_year}</p>
+                        <p><strong>Gender:</strong>{selectedCharacter.gender}</p>
+                        <p><strong>Eye Color:</strong>{selectedCharacter.eye_color}</p>
+                        <p><strong>Hair Color:</strong>{selectedCharacter.hair_color}</p>
+                        <p><strong>Skin Color:</strong>{selectedCharacter.skin_color}</p>
+                    </div>
+                )}
             </table>
         </div>
     )
