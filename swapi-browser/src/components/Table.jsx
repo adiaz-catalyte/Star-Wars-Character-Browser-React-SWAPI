@@ -40,8 +40,9 @@ function CharacterTable({ searchQuery }) {
     }
 
     return (
-        <div className="table-container" style={{ width: '100%', borderCollapse: 'collapse', marginTop: '10px' }}>
+        <div className="table-container">
             <h2>Character Table</h2>
+
             <table className="character-table">
                 <thead>
                     <tr>
@@ -77,22 +78,10 @@ function CharacterTable({ searchQuery }) {
                         </tr>
                     )}
                 </tbody>
-            
-
+            </table>
 
             {selectedCharacter && (
-                <div className="details-panel" 
-                     style={{
-                            position: "absolute",
-                            right: 0,
-                            top: 0,
-                            width: "300px",
-                            padding: "20px",
-                            borderRadius: "10px",
-                            background: "rgba(0,0,0,0.6)",
-                            backdropFilter: "blur(10px)",
-                            color: "white"
-                }}>
+                <div className="details-panel">
                     <h3>Character Details</h3>
                     <p><strong>Name:</strong> {selectedCharacter.name}</p>
                     <p><strong>Height:</strong> {selectedCharacter.height}</p>
@@ -104,8 +93,6 @@ function CharacterTable({ searchQuery }) {
                     <p><strong>Skin Color:</strong> {selectedCharacter.skin_color}</p>
                 </div>
             )}
-            </table>
-
         </div>
     );
 }
