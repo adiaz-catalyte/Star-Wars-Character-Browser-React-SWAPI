@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { fetchCharacters, fetchHomeWorld } from "../services/fetch_characters";
 import './Table.css';
 
 function CharacterTable({ searchQuery }) {
+    const containerRef = useRef(null);
     const [characters, setCharacters] = useState([]);
     const [selectedCharacter, setSelectedCharacter] = useState(null);
     const [homeworld, setHomeworld] = useState(null);
@@ -22,21 +23,23 @@ function CharacterTable({ searchQuery }) {
     }, []);
 
     useEffect(() => {
-        function handleScroll(e) {
-            const el = e.target;
+        if (characters.length === 0) return;
+        
+        const el = containerRef.current;
+        if(!el) return;
 
+        function handleScroll(e) {
             const bottom =
-                el.scrollTop + el.clientHeight >= el.scrollHeight - 50;
+                e.target.scrollTop + e.target.clientHeight >=
+                e.target.scrollHeight - 50;
 
             if (bottom) {
                 setVisibleCount(prev => prev + 10);
             }
         }
         
-        const container = document.querySelector(".table-container");
-        container.addEventListener("scroll", handleScroll);
-
-        return () => container.removeEventListener("scroll", handleScroll);
+        el.addEventListener("scroll", handleScroll);
+        return () => el.removeEventListener("scroll", handleScroll);
     }, []);
 
 
@@ -74,7 +77,7 @@ function CharacterTable({ searchQuery }) {
 
     return (
         <div className="table-wrapper">
-            <div className="table-container">
+            <div className="table-container" ref={containerRef}>
                 <h2>Character Table</h2>
 
                 <table className="character-table">
