@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
-import { fetchCharacters, fetchHomeWorld } from "../services/fetch_characters";
+import { fetchCharacters } from "../services/fetch_characters";
 import './Table.css';
 
 function CharacterTable({ searchQuery }) {
     const containerRef = useRef(null);
     const [characters, setCharacters] = useState([]);
     const [selectedCharacter, setSelectedCharacter] = useState(null);
-    const [homeworld, setHomeworld] = useState(null);
     const [visibleCount, setVisibleCount] = useState(10);
 
     useEffect(() => {
@@ -24,9 +23,9 @@ function CharacterTable({ searchQuery }) {
 
     useEffect(() => {
         if (characters.length === 0) return;
-        
+
         const el = containerRef.current;
-        if(!el) return;
+        if (!el) return;
 
         function handleScroll(e) {
             const bottom =
@@ -34,13 +33,13 @@ function CharacterTable({ searchQuery }) {
                 e.target.scrollHeight - 50;
 
             if (bottom) {
-                setVisibleCount(prev => prev + 10);
+                setVisibleCount((prev) => prev + 10);
             }
         }
-        
+
         el.addEventListener("scroll", handleScroll);
         return () => el.removeEventListener("scroll", handleScroll);
-    }, []);
+    }, [characters.length]);
 
 
     useEffect(() => {
@@ -55,21 +54,11 @@ function CharacterTable({ searchQuery }) {
         return () => document.removeEventListener("click", handleClickOutside);
     },[]);
 
-    useEffect(() => {
-        async function loadHomeworld() {
-            if (selectedCharacter) {
-                const planet = await fetchHomeWorld(selectedCharacter.homeworld);
-                setHomeworld(planet);
-            }
-        }
-        loadHomeworld();
-    }, [selectedCharacter]);
-
     const filteredCharacters = characters.filter((character) =>
         character.name.toLowerCase().includes((searchQuery || "").toLowerCase())
     );
 
-    const visibleCharacters = filteredCharacters.slice(0, visibleCount);
+    const visibleCharacters = filteredCharacters.slice(0, Math.max(visibleCount, filteredCharacters.length));
 
     if (!characters || characters.length === 0) {
         return <p>no results</p>;
@@ -127,8 +116,8 @@ function CharacterTable({ searchQuery }) {
                         <p><strong>Hair Color:</strong> {selectedCharacter.hair_color}</p>
                         <p><strong>Skin Color:</strong> {selectedCharacter.skin_color}</p>
                         
-                        {homeworld && (
-                            <p><strong>Homeworld:</strong> {homeworld.name}</p>
+                        {selectedCharacter.homeworld && (
+                            <p><strong>Homeworld:</strong> {selectedCharacter.homeworld}</p>
                         )}
                     </div>
                 )}
