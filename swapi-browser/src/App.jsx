@@ -5,10 +5,23 @@ import React, {useState, useEffect} from "react";
 import { test_object } from "./fetch_characters";
 
 
+
+
 function CharecterTable() {
 
     const characters = [test_object];
     const [selectedCharacter, setSelectedCharacter] = useState(null);
+
+    useEffect(() => {
+        function handleCLickOutside(event) {
+            if(!event.target.closest("table")) {
+                setSelectedCharacter(null);
+            }
+        }
+
+        document.addEventListener("click", handleCLickOutside);
+        return () => document.removeEventListener("click", handleCLickOutside);
+    }, []);
 
     return (
         <div style={{ padding: '20px' }}>
@@ -27,9 +40,9 @@ function CharecterTable() {
 
                 {/* Table Body with Dynamic Rows */}
                 <tbody>
-                    {characters.map((character, index) => (
+                    {characters.map((character) => (
                         <tr
-                            key={index}
+                            key={character.url}
                             onClick = {() => setSelectedCharacter(character)}
                             style={{ cursor: "pointer"}}
                         >
