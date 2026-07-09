@@ -23,6 +23,9 @@ function CharecterTable() {
         return () => document.removeEventListener("click", handleCLickOutside);
     }, []);
 
+    if (!characters || characters.length === 0) {
+        return <p>No Characters Found!</p>;
+    }
     return (
         <div style={{ padding: '20px' }}>
             <h2>Character Table</h2>
