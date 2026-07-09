@@ -1,5 +1,9 @@
 .table-container {
   padding: 24px 0 0;
+  background: radial-gradient(circle at top, #0a0f24, #000000 70%);
+  min-height: 100vh;
+  font-family: 'Orbitron', sans-serif;
+  color: #e0e0ff;
 }
 
 .character-table {
@@ -12,24 +16,28 @@
   box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
 }
 
-.character-table th,
+.character-table th {
+  padding: 14px 18px;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform:  uppercase;
+  color: #ff003c;
+  background: rgba(20, 0, 0, 0.6);
+  border-bottom: 2px solid #ff003c;
+  text-shadow: 0 0 8px #ff003c
+}
 .character-table td {
   padding: 14px 18px;
   text-align: left;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.character-table th {
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  color: #374151;
-  background: #f9fafb;
+  color: #dbeafe;
+  border-bottom: 1px solid rgba(0, 150, 255, 0.2);
 }
 
 .character-table tbody tr:hover {
-  background: #f3f4f6;
+  background: rgba(0, 150, 255, 0.15);
+  transition: background 0.2s ease;
 }
 
 .character-table tbody tr:last-child td {
@@ -42,7 +50,10 @@
 
 .character-table td:first-child {
   cursor: pointer;
-  transition: color 0.2s ease;
+  color: #00aaff;
+  font-weight: 600;
+  text-shadow: 0 0 6px #00aaff;
+  transition: color 0.2s ease, text-shadow 0.2s ease;
 }
 
 .character-table td:first-child:hover {
