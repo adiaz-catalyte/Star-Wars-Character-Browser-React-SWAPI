@@ -127,10 +127,11 @@ Once the core experience is complete, future improvements could include:
 - Persisting the current search query in the URL
 - Adding automated tests for the search and rendering behavior
 
-## Contributing
-
-If you are improving this project, keep the code clean, the components focused, and the user experience calm. Do not let the dark side of unstructured JSX take over.
-
 ## License
 
 This project is intended for educational use and is not a production-grade application.
+
+## Contributors
+<a href="https://github.com/adiaz-catalyte/Star-Wars-Character-Browser-React-SWAPI/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=adiaz-catalyte/Star-Wars-Character-Browser-React-SWAPI" />
+</a>
