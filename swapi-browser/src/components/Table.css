@@ -57,12 +57,13 @@
 }
 
 .character-table td:first-child:hover {
-  color: #2563eb;
+  color: #66d0ff;
+  text-shadow: 0 0 12px #00aaff;
 }
 
 .empty-row td {
   padding: 24px;
-  color: #6b7280;
+  color: #9ca3af;
   text-align: center;
 }
 
@@ -70,16 +71,20 @@
   margin-top: 24px;
   padding: 22px;
   border-radius: 16px;
-  background: #f8fafc;
-  border: 1px solid #e5e7eb;
+  background: rgba(20, 0, 0, 0.7);
+  border: 1px solid #ff003c;
+  box-shadow: 0 0 25px #ff003c;
+  backdrop-filter: blur(10px);
+  color: #ffe6e6;
 }
 
 .details-panel h3 {
   margin-bottom: 12px;
-  color: #111827;
+  color: #ff003c;
+  text-shadow: 0 0 10px #ff003c;
 }
 
 .details-panel p {
   margin: 6px 0;
-  color: #374151;
+  color: #f3f4f6;
 }
