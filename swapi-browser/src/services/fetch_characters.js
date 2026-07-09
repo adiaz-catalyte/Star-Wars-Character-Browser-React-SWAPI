@@ -21,3 +21,20 @@ export async function fetchCharacters() {
         throw error;
     }
 }
+
+export async function fetchHomeWorld(homeWorldUrl) {
+    try {
+        const response = await fetch(homeWorldUrl)
+        if(!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        return data.result.properties;
+
+    } catch (error) {
+        console.error('Error fetching characters:', error);
+        throw error;
+    }
+}

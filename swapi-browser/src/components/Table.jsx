@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { fetchCharacters } from "../services/fetch_characters";
+import { fetchCharacters, fetchHomeWorld } from "../services/fetch_characters";
 import './Table.css';
 
 function CharacterTable({ searchQuery }) {
     const [characters, setCharacters] = useState([]);
     const [selectedCharacter, setSelectedCharacter] = useState(null);
+    const [homeworld, setHomeworld] = useState(null);
 
     useEffect(() => {
         async function loadCharacters() {
@@ -30,6 +31,16 @@ function CharacterTable({ searchQuery }) {
         document.addEventListener("click", handleClickOutside);
         return () => document.removeEventListener("click", handleClickOutside);
     },[]);
+
+    useEffect(() => {
+        async function loadHomeworld() {
+            if (selectedCharacter) {
+                const planet = await fetchHomeWorld(selectedCharacter.homeworld);
+                setHomeworld(planet);
+            }
+        }
+        loadHomeworld();
+    }, [selectedCharacter]);
 
     const filteredCharacters = characters.filter((character) =>
         character.name.toLowerCase().includes((searchQuery || "").toLowerCase())
@@ -91,6 +102,10 @@ function CharacterTable({ searchQuery }) {
                     <p><strong>Eye Color:</strong> {selectedCharacter.eye_color}</p>
                     <p><strong>Hair Color:</strong> {selectedCharacter.hair_color}</p>
                     <p><strong>Skin Color:</strong> {selectedCharacter.skin_color}</p>
+                    
+                    {homeworld && (
+                        <p><strong>Homeworld:</strong> {homeworld.name}</p>
+                    )}
                 </div>
             )}
         </div>
