@@ -1,6 +1,6 @@
 export const test_object = {
     "name": "Luke Skywalker",
-    "heigt": "172",
+    "height": "172",
     "mass": "77",
     "hair_color": "blond",
     "skin_color": "fair",
