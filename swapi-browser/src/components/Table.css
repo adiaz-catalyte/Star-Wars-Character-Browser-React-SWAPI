@@ -10,10 +10,15 @@
   width: 100%;
   border-collapse: collapse;
   margin-top: 16px;
-  background: #ffffff;
+
+  background: rgba(10, 0, 0, 0.85);
+  backdrop-filter: blur(6px);
+
   border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+
+  box-shadow:
+    0 0 25px rgba(0, 150, 255, 0.4),
+    inset 0 0 20px rgba(255, 0, 0, 0.25);
 }
 
 .character-table th {
@@ -45,7 +50,7 @@
 }
 
 .character-table td {
-  color: #1f2937;
+  color: #406aa5;
 }
 
 .character-table td:first-child {
