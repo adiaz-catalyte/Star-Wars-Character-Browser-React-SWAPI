@@ -1,16 +1,22 @@
-/*
-    This is where are main api logic needs to happen
-*/
-import React, {useState, useEffect} from "react";
-import { test_object } from "./fetch_characters";
+import React, { useState, useEffect } from "react";
+import { fetchCharacters, test_object } from "./fetch_characters";
 
-
-
-
-function CharecterTable() {
-
-    const characters = [test_object];
+function CharacterTable() {
+    const [characters, setCharacters] = useState([]);
     const [selectedCharacter, setSelectedCharacter] = useState(null);
+
+    useEffect(() => {
+        async function loadCharacters() {
+            try {
+                const fetched = await fetchCharacters();
+                setCharacters(fetched);
+            } catch (error) {
+                console.error("Failed to load characters:", error);
+            }
+        }
+
+        loadCharacters();
+    }, []);
 
     useEffect(() => {
         function handleCLickOutside(event) {
@@ -29,26 +35,21 @@ function CharecterTable() {
     return (
         <div style={{ padding: '20px' }}>
             <h2>Character Table</h2>
-            <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '10px'}}>
-                {/* Table Headers */}
+
+            <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '10px' }}>
                 <thead>
                     <tr>
                         <th>Name</th>
                         <th>Height</th>
                         <th>Mass</th>
                         <th>Birth Year</th>
-                        <th>Gender</th>               
+                        <th>Gender</th>
                     </tr>
                 </thead>
 
-                {/* Table Body with Dynamic Rows */}
                 <tbody>
                     {characters.map((character) => (
-                        <tr
-                            key={character.url}
-                            onClick = {() => setSelectedCharacter(character)}
-                            style={{ cursor: "pointer"}}
-                        >
+                        <tr>
                             <td>{character.name}</td>
                             <td>{character.height}</td>
                             <td>{character.mass}</td>
@@ -56,6 +57,15 @@ function CharecterTable() {
                             <td>{character.gender}</td>
                         </tr>
                     ))}
+
+                    {/* Optional test object */}
+                    <tr>
+                        <td>{test_object.name}</td>
+                        <td>{test_object.height}</td>
+                        <td>{test_object.mass}</td>
+                        <td>{test_object.birth_year}</td>
+                        <td>{test_object.gender}</td>
+                    </tr>
                 </tbody>
 
                 {selectedCharacter && (
@@ -73,15 +83,7 @@ function CharecterTable() {
                 )}
             </table>
         </div>
-    )
+    );
 }
 
-function App() {
-    return (
-        <div>
-            <CharecterTable />
-        </div>
-    )
-}
-
-export default App;
+export default CharacterTable;
