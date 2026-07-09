@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { fetchCharacters, test_object } from "../services/fetch_characters";
+import './Table.css';
 
-function CharacterTable() {
+function CharacterTable({ searchQuery }) {
     const [characters, setCharacters] = useState([]);
     const [selectedCharacter, setSelectedCharacter] = useState(null);
 
@@ -30,14 +31,19 @@ function CharacterTable() {
         return () => document.removeEventListener("click", handleClickOutside);
     },[]);
 
+    const filteredCharacters = characters.filter((character) =>
+        character.name.toLowerCase().includes((searchQuery || "").toLowerCase())
+    );
+
     if (!characters || characters.length === 0) {
         return <p>no results</p>;
     }
+
     return (
-        <div style={{ padding: '20px' }}>
+        <div className="table-container">
             <h2>Character Table</h2>
 
-            <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '10px' }}>
+            <table className="character-table">
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -49,37 +55,44 @@ function CharacterTable() {
                 </thead>
 
                 <tbody>
-                    {characters.map((character) => (
-                        <tr key={character.url}>
-                            <td
-                                id="character-name-cell"
-                                onClick={() => setSelectedCharacter(character)}
-                                style={{ cursor: "pointer" }}
-                            >
-                                {character.name}
+                    {filteredCharacters.length > 0 ? (
+                        filteredCharacters.map((character) => (
+                            <tr key={character.url}>
+                                <td
+                                    id="character-name-cell"
+                                    onClick={() => setSelectedCharacter(character)}
+                                >
+                                    {character.name}
+                                </td>
+                                <td>{character.height}</td>
+                                <td>{character.mass}</td>
+                                <td>{character.birth_year}</td>
+                                <td>{character.gender}</td>
+                            </tr>
+                        ))
+                    ) : (
+                        <tr className="empty-row">
+                            <td colSpan="5">
+                                No characters match your search.
                             </td>
-                            <td>{character.height}</td>
-                            <td>{character.mass}</td>
-                            <td>{character.birth_year}</td>
-                            <td>{character.gender}</td>
                         </tr>
-                    ))}
+                    )}
                 </tbody>
-
-                {selectedCharacter && (
-                    <div style={{ marginTop: "20px"}}>
-                        <h3>Character Details</h3>
-                        <p><strong>Name:</strong>{selectedCharacter.name}</p>
-                        <p><strong>Height:</strong>{selectedCharacter.height}</p>
-                        <p><strong>Weight:</strong>{selectedCharacter.mass}</p>
-                        <p><strong>Birth Year:</strong>{selectedCharacter.birth_year}</p>
-                        <p><strong>Gender:</strong>{selectedCharacter.gender}</p>
-                        <p><strong>Eye Color:</strong>{selectedCharacter.eye_color}</p>
-                        <p><strong>Hair Color:</strong>{selectedCharacter.hair_color}</p>
-                        <p><strong>Skin Color:</strong>{selectedCharacter.skin_color}</p>
-                    </div>
-                )}
             </table>
+
+            {selectedCharacter && (
+                <div className="details-panel">
+                    <h3>Character Details</h3>
+                    <p><strong>Name:</strong> {selectedCharacter.name}</p>
+                    <p><strong>Height:</strong> {selectedCharacter.height}</p>
+                    <p><strong>Weight:</strong> {selectedCharacter.mass}</p>
+                    <p><strong>Birth Year:</strong> {selectedCharacter.birth_year}</p>
+                    <p><strong>Gender:</strong> {selectedCharacter.gender}</p>
+                    <p><strong>Eye Color:</strong> {selectedCharacter.eye_color}</p>
+                    <p><strong>Hair Color:</strong> {selectedCharacter.hair_color}</p>
+                    <p><strong>Skin Color:</strong> {selectedCharacter.skin_color}</p>
+                </div>
+            )}
         </div>
     );
 }
