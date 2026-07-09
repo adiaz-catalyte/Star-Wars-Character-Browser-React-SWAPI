@@ -22,18 +22,21 @@ function CharacterTable({ searchQuery }) {
     }, []);
 
     useEffect(() => {
-        function handleScroll() {
-            const bottom = 
-                window.innerHeight + window.scrollY >=
-                document.body.offsetHeight - 200;
+        function handleScroll(e) {
+            const el = e.target;
+
+            const bottom =
+                el.scrollTop + el.clientHeight >= el.scrollHeight - 50;
 
             if (bottom) {
-                setVisibleCount((prev) => prev + 10);
+                setVisibleCount(prev => prev + 10);
             }
         }
         
-        window.addEventListener("scroll", handleScroll);
-        return () => window.removeEventListener("scroll", handleScroll);
+        const container = document.querySelector(".table-container");
+        container.addEventListener("scroll", handleScroll);
+
+        return () => container.removeEventListener("scroll", handleScroll);
     }, []);
 
 
@@ -70,61 +73,62 @@ function CharacterTable({ searchQuery }) {
     }
 
     return (
-        <div className="table-container">
-            <h2>Character Table</h2>
+        <div className="table-wrapper">
+            <div className="table-container">
+                <h2>Character Table</h2>
 
-            <table className="character-table">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Height</th>
-                        <th>Mass</th>
-                        <th>Birth Year</th>
-                        <th>Gender</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    {visibleCharacters.length > 0 ? (
-                        visibleCharacters.map((character) => (
-                            <tr key={character.url}>
-                                <td
-                                    id="character-name-cell"
-                                    onClick={() => setSelectedCharacter(character)}
-                                >
-                                    {character.name}
-                                </td>
-                                <td onClick={() => setSelectedCharacter(null)}>{character.height}</td>
-                                <td onClick={() => setSelectedCharacter(null)}>{character.mass}</td>
-                                <td onClick={() => setSelectedCharacter(null)}>{character.birth_year}</td>
-                                <td onClick={() => setSelectedCharacter(null)}>{character.gender}</td>
-                            </tr>
-                        ))
-                    ) : (
-                        <tr className="empty-row">
-                            <td colSpan="5">No characters match your search.</td>
+                <table className="character-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Height</th>
+                            <th>Mass</th>
+                            <th>Birth Year</th>
+                            <th>Gender</th>
                         </tr>
-                    )}
-                </tbody>
-            </table>
+                    </thead>
 
+                    <tbody>
+                        {visibleCharacters.length > 0 ? (
+                            visibleCharacters.map((character) => (
+                                <tr key={character.url}>
+                                    <td
+                                        id="character-name-cell"
+                                        onClick={() => setSelectedCharacter(character)}
+                                    >
+                                        {character.name}
+                                    </td>
+                                    <td onClick={() => setSelectedCharacter(null)}>{character.height}</td>
+                                    <td onClick={() => setSelectedCharacter(null)}>{character.mass}</td>
+                                    <td onClick={() => setSelectedCharacter(null)}>{character.birth_year}</td>
+                                    <td onClick={() => setSelectedCharacter(null)}>{character.gender}</td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr className="empty-row">
+                                <td colSpan="5">No characters match your search.</td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
+            </div>
             {selectedCharacter && (
-                <div className="details-panel">
-                    <h3>Character Details</h3>
-                    <p><strong>Name:</strong> {selectedCharacter.name}</p>
-                    <p><strong>Height:</strong> {selectedCharacter.height}</p>
-                    <p><strong>Weight:</strong> {selectedCharacter.mass}</p>
-                    <p><strong>Birth Year:</strong> {selectedCharacter.birth_year}</p>
-                    <p><strong>Gender:</strong> {selectedCharacter.gender}</p>
-                    <p><strong>Eye Color:</strong> {selectedCharacter.eye_color}</p>
-                    <p><strong>Hair Color:</strong> {selectedCharacter.hair_color}</p>
-                    <p><strong>Skin Color:</strong> {selectedCharacter.skin_color}</p>
-                    
-                    {homeworld && (
-                        <p><strong>Homeworld:</strong> {homeworld.name}</p>
-                    )}
-                </div>
-            )}
+                    <div className="details-panel">
+                        <h3>Character Details</h3>
+                        <p><strong>Name:</strong> {selectedCharacter.name}</p>
+                        <p><strong>Height:</strong> {selectedCharacter.height}</p>
+                        <p><strong>Weight:</strong> {selectedCharacter.mass}</p>
+                        <p><strong>Birth Year:</strong> {selectedCharacter.birth_year}</p>
+                        <p><strong>Gender:</strong> {selectedCharacter.gender}</p>
+                        <p><strong>Eye Color:</strong> {selectedCharacter.eye_color}</p>
+                        <p><strong>Hair Color:</strong> {selectedCharacter.hair_color}</p>
+                        <p><strong>Skin Color:</strong> {selectedCharacter.skin_color}</p>
+                        
+                        {homeworld && (
+                            <p><strong>Homeworld:</strong> {homeworld.name}</p>
+                        )}
+                    </div>
+                )}
         </div>
     );
 }

@@ -3,7 +3,7 @@ export async function fetchCharacters() {
         const firstPage = await fetch("https://swapi.tech/api/people?page=1&limit=10");
         const firstData = await firstPage.json();
 
-        const totalPages = firstData.totalPages();
+        const totalPages = firstData.total_pages;
 
         let allCharacters = [...firstData.results];
 
