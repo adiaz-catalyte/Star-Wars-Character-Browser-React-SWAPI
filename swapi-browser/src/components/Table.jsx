@@ -6,6 +6,7 @@ function CharacterTable({ searchQuery }) {
     const [characters, setCharacters] = useState([]);
     const [selectedCharacter, setSelectedCharacter] = useState(null);
     const [homeworld, setHomeworld] = useState(null);
+    const [visibleCount, setVisibleCount] = useState(10);
 
     useEffect(() => {
         async function loadCharacters() {
@@ -19,6 +20,22 @@ function CharacterTable({ searchQuery }) {
 
         loadCharacters();
     }, []);
+
+    useEffect(() => {
+        function handleScroll() {
+            const bottom = 
+                window.innerHeight + window.scrollY >=
+                document.body.offsetHeight - 200;
+
+            if (bottom) {
+                setVisibleCount((prev) => prev + 10);
+            }
+        }
+        
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
+
 
     useEffect(() => {
 
@@ -46,6 +63,8 @@ function CharacterTable({ searchQuery }) {
         character.name.toLowerCase().includes((searchQuery || "").toLowerCase())
     );
 
+    const visibleCharacters = filteredCharacters.slice(0, visibleCount);
+
     if (!characters || characters.length === 0) {
         return <p>no results</p>;
     }
@@ -66,8 +85,8 @@ function CharacterTable({ searchQuery }) {
                 </thead>
 
                 <tbody>
-                    {filteredCharacters.length > 0 ? (
-                        filteredCharacters.map((character) => (
+                    {visibleCharacters.length > 0 ? (
+                        visibleCharacters.map((character) => (
                             <tr key={character.url}>
                                 <td
                                     id="character-name-cell"
@@ -83,9 +102,7 @@ function CharacterTable({ searchQuery }) {
                         ))
                     ) : (
                         <tr className="empty-row">
-                            <td colSpan="5">
-                                No characters match your search.
-                            </td>
+                            <td colSpan="5">No characters match your search.</td>
                         </tr>
                     )}
                 </tbody>

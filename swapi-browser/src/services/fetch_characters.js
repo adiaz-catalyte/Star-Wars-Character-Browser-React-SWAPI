@@ -1,17 +1,23 @@
 export async function fetchCharacters() {
     try {
-        const response = await fetch('https://swapi.tech/api/people');
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        const firstPage = await fetch("https://swapi.tech/api/people?page=1&limit=10");
+        const firstData = await firstPage.json();
+
+        const totalPages = firstData.totalPages();
+
+        let allCharacters = [...firstData.results];
+
+        for (let page = 2; page <= totalPages; page++) {
+            const result = await fetch(`https://swapi.tech/api/people?page=${page}&limit=10`)
+            const data = await result.json();
+            allCharacters = [...allCharacters, ...data.results];
         }
 
-        const data = await response.json();
-
         const detailedCharacters = await Promise.all(
-            data.results.map(async (character) => {
-                const detailResponse = await fetch(character.url);
-                const detailData = await detailResponse.json();
-                return detailData.result.properties;
+            allCharacters.map(async (character) => {
+                const detailedResult = await fetch(character.url);
+                const detailedData = await detailedResult.json();
+                return detailedData.result.properties;
             })
         );
 
