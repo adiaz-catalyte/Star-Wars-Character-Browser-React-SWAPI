@@ -40,9 +40,8 @@ function CharacterTable({ searchQuery }) {
     }
 
     return (
-        <div className="table-container">
+        <div className="table-container" style={{ width: '100%', borderCollapse: 'collapse', marginTop: '10px' }}>
             <h2>Character Table</h2>
-
             <table className="character-table">
                 <thead>
                     <tr>
@@ -64,10 +63,10 @@ function CharacterTable({ searchQuery }) {
                                 >
                                     {character.name}
                                 </td>
-                                <td>{character.height}</td>
-                                <td>{character.mass}</td>
-                                <td>{character.birth_year}</td>
-                                <td>{character.gender}</td>
+                                <td onClick={() => setSelectedCharacter(null)}>{character.height}</td>
+                                <td onClick={() => setSelectedCharacter(null)}>{character.mass}</td>
+                                <td onClick={() => setSelectedCharacter(null)}>{character.birth_year}</td>
+                                <td onClick={() => setSelectedCharacter(null)}>{character.gender}</td>
                             </tr>
                         ))
                     ) : (
@@ -78,10 +77,22 @@ function CharacterTable({ searchQuery }) {
                         </tr>
                     )}
                 </tbody>
-            </table>
+            
+
 
             {selectedCharacter && (
-                <div className="details-panel">
+                <div className="details-panel" 
+                     style={{
+                            position: "absolute",
+                            right: 0,
+                            top: 0,
+                            width: "300px",
+                            padding: "20px",
+                            borderRadius: "10px",
+                            background: "rgba(0,0,0,0.6)",
+                            backdropFilter: "blur(10px)",
+                            color: "white"
+                }}>
                     <h3>Character Details</h3>
                     <p><strong>Name:</strong> {selectedCharacter.name}</p>
                     <p><strong>Height:</strong> {selectedCharacter.height}</p>
@@ -93,6 +104,8 @@ function CharacterTable({ searchQuery }) {
                     <p><strong>Skin Color:</strong> {selectedCharacter.skin_color}</p>
                 </div>
             )}
+            </table>
+
         </div>
     );
 }
