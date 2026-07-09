@@ -19,14 +19,14 @@ function CharacterTable() {
     }, []);
 
     useEffect(() => {
-        function handleCLickOutside(event) {
+        function handleClickOutside(event) {
             if(!event.target.closest("table")) {
                 setSelectedCharacter(null);
             }
         }
 
-        document.addEventListener("click", handleCLickOutside);
-        return () => document.removeEventListener("click", handleCLickOutside);
+        document.addEventListener("click", handleClickOutside);
+        return () => document.removeEventListener("click", handleClickOutside);
     }, []);
 
     if (!characters || characters.length === 0) {
@@ -49,7 +49,11 @@ function CharacterTable() {
 
                 <tbody>
                     {characters.map((character) => (
-                        <tr>
+                        <tr
+                            key={character.url}
+                            onClick={() => setSelectedCharacter(character)}
+                            style={{ cursor: "pointer" }}
+                        >
                             <td>{character.name}</td>
                             <td>{character.height}</td>
                             <td>{character.mass}</td>
