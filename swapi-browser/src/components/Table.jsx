@@ -115,22 +115,19 @@ function CharacterTable({ searchQuery }) {
                 </table>
             </div>
             {selectedCharacter && (
-                    <div className="details-panel">
-                        <h3>Character Details</h3>
-                        <p><strong>Name:</strong> {selectedCharacter.name}</p>
-                        <p><strong>Height:</strong> {selectedCharacter.height}</p>
-                        <p><strong>Weight:</strong> {selectedCharacter.mass}</p>
-                        <p><strong>Birth Year:</strong> {selectedCharacter.birth_year}</p>
-                        <p><strong>Gender:</strong> {selectedCharacter.gender}</p>
-                        <p><strong>Eye Color:</strong> {selectedCharacter.eye_color}</p>
-                        <p><strong>Hair Color:</strong> {selectedCharacter.hair_color}</p>
-                        <p><strong>Skin Color:</strong> {selectedCharacter.skin_color}</p>
-                        
-                        {homeworld && (
-                            <p><strong>Homeworld:</strong> {homeworld.name}</p>
-                        )}
-                    </div>
-                )}
+                <div className="details-panel">
+                    <h3>Character Details</h3>
+                    <p><strong>Name:</strong> {selectedCharacter.name}</p>
+                    <p><strong>Height:</strong> {selectedCharacter.height}</p>
+                    <p><strong>Weight:</strong> {selectedCharacter.mass}</p>
+                    <p><strong>Birth Year:</strong> {selectedCharacter.birth_year}</p>
+                    <p><strong>Gender:</strong> {selectedCharacter.gender}</p>
+                    <p><strong>Eye Color:</strong> {selectedCharacter.eye_color}</p>
+                    <p><strong>Hair Color:</strong> {selectedCharacter.hair_color}</p>
+                    <p><strong>Skin Color:</strong> {selectedCharacter.skin_color}</p>
+                    <p><strong>Homeworld:</strong> {selectedCharacter.homeworldName}</p>
+                </div>
+            )}
         </div>
     );
 }
