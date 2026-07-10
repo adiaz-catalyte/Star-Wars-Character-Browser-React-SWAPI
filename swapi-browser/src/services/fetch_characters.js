@@ -1,30 +1,6 @@
-const planetCache = new Map();
-
-async function fetchHomeworldCached(url) {
-    if(!url) return "Unknown";
-
-    if (planetCache.has(url)) {
-        return planetCache.get(url);
-    }
-
-    try {
-        const res = await fetch(url);
-        const data = await res.json();
-
-        const name = data?.result?.properties?.name || "Unknown";
-
-        planetCache.set(url, name);
-
-        return name;
-    } catch (err) {
-        console.error("Homewold fetch failed:", err);
-        return "Unknown";
-    }
-}
-
 export async function fetchCharacters() {
     try {
-        const response = await fetch('https://swapi.tech/api/people?limit=5');
+        const response = await fetch('https://swapi.tech/api/people');
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -37,11 +13,31 @@ export async function fetchCharacters() {
                 const detailData = await detailResponse.json();
                 const props = detailData.result.properties;
 
-                const homeworldName = await fetchHomeworldCached(props.homeworld);
+                if(props.homeworld && props.homeworld.statsWith("http"))
+                {
+                    
+                    try {
+                        const homeworldResponse = await fetch(props.homeworld);
+                        const homeworldData = await homeworldResponse.json();
+                        
+                        if (
+                            homeworldData &&
+                            homeworldData.result &&
+                            homeworldData.result.properties &&
+                            homeworldData.result.properties.name
+                        ) {
+                            props.homeworld = homeworldData.result.properties.name;
+                        } else {
+                            props.homeworld = "Unknown";
+                        }
+                    } catch (homeworldError) {
+                        console.error("Failed to fetch homeworld:", homeworldError);
+                        props.homeworld = "Unknown";
+                    }
 
-                props.homeworldName = homeworldName;
-
-                return props;
+                } else {
+                    props.homeworld = "unknown";
+                }
             })
         );
 
