@@ -1,7 +1,7 @@
 const planetCache = new Map();
 
 async function fetchHomeworldCached(url) {
-    if(!url) return "Unknown";
+    if (!url) return "Unknown";
 
     if (planetCache.has(url)) {
         return planetCache.get(url);
@@ -9,22 +9,25 @@ async function fetchHomeworldCached(url) {
 
     try {
         const res = await fetch(url);
-        const data = await res.json();
+        if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+        }
 
-        const name = data?.result?.properties?.name || "Unknown";
+        const data = await res.json();
+        const name = data?.name || "Unknown";
 
         planetCache.set(url, name);
 
         return name;
     } catch (err) {
-        console.error("Homewold fetch failed:", err);
+        console.error("Homeworld fetch failed:", err);
         return "Unknown";
     }
 }
 
-export async function fetchCharacters() {
+export async function fetchCharacters(page = 1) {
     try {
-        const response = await fetch('https://swapi.tech/api/people?limit=5');
+        const response = await fetch(`https://swapi.dev/api/people/?page=${page}`);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -32,17 +35,18 @@ export async function fetchCharacters() {
         const data = await response.json();
 
         const detailedCharacters = await Promise.all(
-            data.results.map(async (character) => {
-                const detailResponse = await fetch(character.url);
-                const detailData = await detailResponse.json();
-                const props = detailData.result.properties;
-
-                const homeworldName = await fetchHomeworldCached(props.homeworld);
-
-                props.homeworldName = homeworldName;
-
-                return props;
-            })
+            (data.results || []).map(async (character) => ({
+                name: character.name,
+                height: character.height,
+                mass: character.mass,
+                birth_year: character.birth_year,
+                gender: character.gender,
+                eye_color: character.eye_color,
+                hair_color: character.hair_color,
+                skin_color: character.skin_color,
+                homeworldName: await fetchHomeworldCached(character.homeworld),
+                url: character.url,
+            }))
         );
 
         return detailedCharacters;

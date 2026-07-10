@@ -1,35 +1,65 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { fetchCharacters } from "../services/fetch_characters";
 import './Table.css';
 
 function CharacterTable({ searchQuery }) {
     const [characters, setCharacters] = useState([]);
     const [selectedCharacter, setSelectedCharacter] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [hasMore, setHasMore] = useState(true);
+    const [page, setPage] = useState(1);
+    const loadedPagesRef = useRef(new Set());
 
     useEffect(() => {
+        if (loadedPagesRef.current.has(page)) {
+            return;
+        }
+
         async function loadCharacters() {
+            setIsLoading(true);
             try {
-                const fetched = await fetchCharacters();
-                setCharacters(fetched);
+                const fetched = await fetchCharacters(page);
+                if (fetched.length === 0) {
+                    setHasMore(false);
+                    return;
+                }
+
+                setCharacters(prev => [...prev, ...fetched]);
+                loadedPagesRef.current.add(page);
             } catch (error) {
                 console.error("Failed to load characters:", error);
+            } finally {
+                setIsLoading(false);
             }
         }
 
         loadCharacters();
-    }, []);
+    }, [page]);
 
     useEffect(() => {
+        function handleScroll() {
+            const bottom =
+                window.innerHeight + window.scrollY >= document.body.offsetHeight - 200;
 
+            if (bottom && !isLoading && hasMore) {
+                setPage(prev => prev + 1);
+            }
+        }
+
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, [isLoading, hasMore]);
+
+    useEffect(() => {
         function handleClickOutside(event) {
-            if(!event.target.closest("table")) {
+            if (!event.target.closest("table")) {
                 setSelectedCharacter(null);
             }
         }
 
         document.addEventListener("click", handleClickOutside);
         return () => document.removeEventListener("click", handleClickOutside);
-    },[]);
+    }, []);
 
     const filteredCharacters = characters.filter((character) =>
         character.name.toLowerCase().includes((searchQuery || "").toLowerCase())
@@ -79,6 +109,8 @@ function CharacterTable({ searchQuery }) {
                     )}
                 </tbody>
             </table>
+
+            {isLoading && <p>Loading more characters...</p>}
 
             {selectedCharacter && (
                 <div className="details-panel">
