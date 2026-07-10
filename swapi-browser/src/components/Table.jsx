@@ -9,11 +9,14 @@ function CharacterTable({ searchQuery }) {
     const [hasMore, setHasMore] = useState(true);
     const [page, setPage] = useState(1);
     const loadedPagesRef = useRef(new Set());
+    const loadingPagesRef = useRef(new Set());
 
     useEffect(() => {
-        if (loadedPagesRef.current.has(page)) {
+        if (loadedPagesRef.current.has(page) || loadingPagesRef.current.has(page)) {
             return;
         }
+
+        loadingPagesRef.current.add(page);
 
         async function loadCharacters() {
             setIsLoading(true);
@@ -24,11 +27,22 @@ function CharacterTable({ searchQuery }) {
                     return;
                 }
 
-                setCharacters(prev => [...prev, ...fetched]);
+                setCharacters(prev => {
+                    const mergedCharacters = new Map(prev.map(character => [character.url, character]));
+
+                    fetched.forEach(character => {
+                        if (!mergedCharacters.has(character.url)) {
+                            mergedCharacters.set(character.url, character);
+                        }
+                    });
+
+                    return Array.from(mergedCharacters.values());
+                });
                 loadedPagesRef.current.add(page);
             } catch (error) {
                 console.error("Failed to load characters:", error);
             } finally {
+                loadingPagesRef.current.delete(page);
                 setIsLoading(false);
             }
         }
