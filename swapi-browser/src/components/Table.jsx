@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from "react";
-import { fetchCharacters } from "../services/fetch_characters";
+import React, { useState, useEffect, useRef } from "react";
+import { fetchCharacters, fetchHomeWorld } from "../services/fetch_characters";
 import './Table.css';
 
 function CharacterTable({ searchQuery }) {
+    const containerRef = useRef(null);
     const [characters, setCharacters] = useState([]);
     const [selectedCharacter, setSelectedCharacter] = useState(null);
+    const [homeworld, setHomeworld] = useState(null);
+    const [visibleCount, setVisibleCount] = useState(10);
 
     useEffect(() => {
         async function loadCharacters() {
@@ -20,6 +23,26 @@ function CharacterTable({ searchQuery }) {
     }, []);
 
     useEffect(() => {
+        if (characters.length === 0) return;
+        
+        const el = containerRef.current;
+        if(!el) return;
+
+        function handleScroll(e) {
+            const bottom =
+                e.target.scrollTop + e.target.clientHeight >=
+                e.target.scrollHeight - 50;
+
+            if (bottom) {
+                setVisibleCount(prev => prev + 10);
+            }
+        }
+        
+        el.addEventListener("scroll", handleScroll);
+        return () => el.removeEventListener("scroll", handleScroll);
+    });
+
+    useEffect(() => {
 
         function handleClickOutside(event) {
             if(!event.target.closest("table")) {
@@ -31,55 +54,66 @@ function CharacterTable({ searchQuery }) {
         return () => document.removeEventListener("click", handleClickOutside);
     },[]);
 
+    useEffect(() => {
+        async function loadHomeworld() {
+            if (selectedCharacter) {
+                const planet = await fetchHomeWorld(selectedCharacter.homeworld);
+                setHomeworld(planet);
+            }
+        }
+        loadHomeworld();
+    }, [selectedCharacter]);
+
     const filteredCharacters = characters.filter((character) =>
         character.name.toLowerCase().includes((searchQuery || "").toLowerCase())
     );
+
+    const visibleCharacters = filteredCharacters.slice(0, visibleCount);
 
     if (!characters || characters.length === 0) {
         return <p>no results</p>;
     }
 
     return (
-        <div className="table-container">
-            <h2>Character Table</h2>
+        <div className="table-wrapper">
+            <div className="table-container" ref={containerRef}>
+                <h2>Character Table</h2>
 
-            <table className="character-table">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Height</th>
-                        <th>Mass</th>
-                        <th>Birth Year</th>
-                        <th>Gender</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    {filteredCharacters.length > 0 ? (
-                        filteredCharacters.map((character) => (
-                            <tr key={character.url}>
-                                <td
-                                    id="character-name-cell"
-                                    onClick={() => setSelectedCharacter(character)}
-                                >
-                                    {character.name}
-                                </td>
-                                <td onClick={() => setSelectedCharacter(null)}>{character.height}</td>
-                                <td onClick={() => setSelectedCharacter(null)}>{character.mass}</td>
-                                <td onClick={() => setSelectedCharacter(null)}>{character.birth_year}</td>
-                                <td onClick={() => setSelectedCharacter(null)}>{character.gender}</td>
-                            </tr>
-                        ))
-                    ) : (
-                        <tr className="empty-row">
-                            <td colSpan="5">
-                                No characters match your search.
-                            </td>
+                <table className="character-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Height</th>
+                            <th>Mass</th>
+                            <th>Birth Year</th>
+                            <th>Gender</th>
                         </tr>
-                    )}
-                </tbody>
-            </table>
+                    </thead>
 
+                    <tbody>
+                        {visibleCharacters.length > 0 ? (
+                            visibleCharacters.map((character) => (
+                                <tr key={character.url}>
+                                    <td
+                                        id="character-name-cell"
+                                        onClick={() => setSelectedCharacter(character)}
+                                    >
+                                        {character.name}
+                                    </td>
+                                    <td onClick={() => setSelectedCharacter(null)}>{character.height}</td>
+                                    <td onClick={() => setSelectedCharacter(null)}>{character.mass}</td>
+                                    <td onClick={() => setSelectedCharacter(null)}>{character.birth_year}</td>
+                                    <td onClick={() => setSelectedCharacter(null)}>{character.gender}</td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr className="empty-row">
+                                <td colSpan="5">No characters match your search.</td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
+            </div>
             {selectedCharacter && (
                 <div className="details-panel">
                     <h3>Character Details</h3>
