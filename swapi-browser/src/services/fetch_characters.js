@@ -1,44 +1,47 @@
 export async function fetchCharacters() {
     try {
-        const firstPage = await fetch("https://swapi.tech/api/people?page=1&limit=10");
-        const firstData = await firstPage.json();
-
-        const totalPages = firstData.total_pages;
-
-        let allCharacters = [...firstData.results];
-
-        for (let page = 2; page <= totalPages; page++) {
-            const result = await fetch(`https://swapi.tech/api/people?page=${page}&limit=10`)
-            const data = await result.json();
-            allCharacters = [...allCharacters, ...data.results];
-        }
-
-        const detailedCharacters = await Promise.all(
-            allCharacters.map(async (character) => {
-                const detailedResult = await fetch(character.url);
-                const detailedData = await detailedResult.json();
-                return detailedData.result.properties;
-            })
-        );
-
-        return detailedCharacters;
-    } catch (error) {
-        console.error('Error fetching characters:', error);
-        throw error;
-    }
-}
-
-export async function fetchHomeWorld(homeWorldUrl) {
-    try {
-        const response = await fetch(homeWorldUrl)
-        if(!response.ok) {
+        const response = await fetch('https://swapi.tech/api/people');
+        if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const data = await response.json();
 
-        return data.result.properties;
+        const detailedCharacters = await Promise.all(
+            data.results.map(async (character) => {
+                const detailResponse = await fetch(character.url);
+                const detailData = await detailResponse.json();
+                const props = detailData.result.properties;
 
+                if(props.homeworld && props.homeworld.statsWith("http"))
+                {
+                    
+                    try {
+                        const homeworldResponse = await fetch(props.homeworld);
+                        const homeworldData = await homeworldResponse.json();
+                        
+                        if (
+                            homeworldData &&
+                            homeworldData.result &&
+                            homeworldData.result.properties &&
+                            homeworldData.result.properties.name
+                        ) {
+                            props.homeworld = homeworldData.result.properties.name;
+                        } else {
+                            props.homeworld = "Unknown";
+                        }
+                    } catch (homeworldError) {
+                        console.error("Failed to fetch homeworld:", homeworldError);
+                        props.homeworld = "Unknown";
+                    }
+
+                } else {
+                    props.homeworld = "unknown";
+                }
+            })
+        );
+
+        return detailedCharacters;
     } catch (error) {
         console.error('Error fetching characters:', error);
         throw error;
