@@ -11,7 +11,33 @@ export async function fetchCharacters() {
             data.results.map(async (character) => {
                 const detailResponse = await fetch(character.url);
                 const detailData = await detailResponse.json();
-                return detailData.result.properties;
+                const props = detailData.result.properties;
+
+                if(props.homeworld && props.homeworld.statsWith("http"))
+                {
+                    
+                    try {
+                        const homeworldResponse = await fetch(props.homeworld);
+                        const homeworldData = await homeworldResponse.json();
+                        
+                        if (
+                            homeworldData &&
+                            homeworldData.result &&
+                            homeworldData.result.properties &&
+                            homeworldData.result.properties.name
+                        ) {
+                            props.homeworld = homeworldData.result.properties.name;
+                        } else {
+                            props.homeworld = "Unknown";
+                        }
+                    } catch (homeworldError) {
+                        console.error("Failed to fetch homeworld:", homeworldError);
+                        props.homeworld = "Unknown";
+                    }
+
+                } else {
+                    props.homeworld = "unknown";
+                }
             })
         );
 
