@@ -1,15 +1,9 @@
 .table-container {
   padding: 24px 0 0;
   background: radial-gradient(circle at top, #0a0f24, #000000 70%);
-  height: 500px;
-  overflow-y: auto;
+  min-height: 100vh;
   font-family: 'Orbitron', sans-serif;
   color: #e0e0ff;
-}
-
-.table-wrapper {
-  display: flex;
-  flex-direction: column;
 }
 
 .character-table {
