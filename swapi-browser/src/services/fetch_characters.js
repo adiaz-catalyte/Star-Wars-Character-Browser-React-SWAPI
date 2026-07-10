@@ -1,6 +1,6 @@
 export async function fetchCharacters() {
     try {
-        const response = await fetch('https://swapi.tech/api/people');
+        const response = await fetch('https://swapi.tech/api/people?limit=10');
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -13,7 +13,7 @@ export async function fetchCharacters() {
                 const detailData = await detailResponse.json();
                 const props = detailData.result.properties;
 
-                if(props.homeworld && props.homeworld.statsWith("http"))
+                if(props.homeworld && props.homeworld.startsWith("http"))
                 {
                     
                     try {
@@ -38,6 +38,8 @@ export async function fetchCharacters() {
                 } else {
                     props.homeworld = "unknown";
                 }
+
+                return props
             })
         );
 
